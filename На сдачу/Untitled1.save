@@ -1,0 +1,51 @@
+#include "TXLib.h"
+00016 
+00017 int main()
+00018     {
+00019     txCreateWindow (800, 600);
+00020 
+00021     // Загружаем изображения один раз, в начале программы
+00022     
+00023     HDC table  = txLoadImage ("Resources\\Images\\Table.bmp");  // Пример загрузки картинки
+00024     HDC racket = txLoadImage ("Resources\\Images\\Racket.bmp"); // Пример загрузки картинки
+00025 
+00026     txSetFillColor (TX_RED);
+00027 
+00028     int    mode  = 1;
+00029     double alpha = 1;
+00030 
+00031     while (!GetAsyncKeyState (VK_ESCAPE))
+00032         {
+00033         int x = txMouseX(), y = txMouseY();
+00034 
+00035         txBitBlt (txDC(), 0, 0, 800, 600, table, 0, 0);
+00036 
+00037         if (GetAsyncKeyState ('1'))     mode   = 1;
+00038         if (GetAsyncKeyState ('2'))     mode   = 2;
+00039         if (GetAsyncKeyState ('3'))     mode   = 3;
+00040 
+00041         if (GetAsyncKeyState (VK_UP))   alpha += 0.05;
+00042         if (GetAsyncKeyState (VK_DOWN)) alpha -= 0.05;
+00043         if (alpha < 0) alpha = 0;
+00044         if (alpha > 1) alpha = 1;
+00045 
+00046         // Копирование на экран разными способами
+00047 
+00048         switch (mode)
+00049             {
+00050             case 1: txBitBlt         (txDC(), x-200/2, y-150/2, 200, 150, racket, 0, 0);        break; // Пример копирования
+00051             case 2: txTransparentBlt (txDC(), x-200/2, y-150/2, 200, 150, racket, 0, 0);        break; // Пример копирования с прозрачным цветом
+00052             case 3: txAlphaBlend     (txDC(), x-200/2, y-150/2, 200, 150, racket, 0, 0, alpha); break; // Пример копирования с полупрозрачностью
+00053             default: break;
+00054             }
+00055 
+00056         txSleep (20);
+00057         }
+00058 
+00059     // Удаляем ненужные DC, освобождая системные ресурсы 
+ 
+     txDeleteDC (table);
+     txDeleteDC (racket);
+ 
+     return 0;
+     }
